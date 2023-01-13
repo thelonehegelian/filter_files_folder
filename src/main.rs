@@ -56,4 +56,28 @@ fn main() {
         }
     }
     println!("Duplicate filenames: {:?}", duplicate_filenames);
+
+    /************************************
+     * FIND FILES WITHE A GIVEN PREDICATE
+     ************************************/
+
+    // TODO: make this into a func
+    for entry in WalkDir::new(".")
+        .follow_links(true)
+        .into_iter()
+        .filter_map(|e| e.ok())
+    {
+        let f_name = entry.file_name().to_string_lossy();
+        let sec_modified = entry
+            .metadata()
+            .unwrap()
+            .modified()
+            .unwrap()
+            .elapsed()
+            .unwrap()
+            .as_secs();
+        if f_name.ends_with(".json") && sec_modified > 100 {
+            println!("{} was modified {} seconds ago", f_name, sec_modified);
+        }
+    }
 }
