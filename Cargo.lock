@@ -7,6 +7,7 @@ name = "file_metadata"
 version = "0.1.0"
 dependencies = [
  "same-file",
+ "walkdir",
 ]
 
 [[package]]
@@ -15,6 +16,17 @@ version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502"
 dependencies = [
+ "winapi-util",
+]
+
+[[package]]
+name = "walkdir"
+version = "2.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "808cf2735cd4b6866113f648b791c6adc5714537bc222d9347bb203386ffda56"
+dependencies = [
+ "same-file",
+ "winapi",
  "winapi-util",
 ]
 
