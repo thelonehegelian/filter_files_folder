@@ -80,4 +80,35 @@ fn main() {
             println!("{} was modified {} seconds ago", f_name, sec_modified);
         }
     }
+
+    /***********************
+     * SKIP HIDDEN FILES
+     ***********************/
+
+    // TODO: Add hidden_file() function
+    for entry in WalkDir::new(".")
+        .follow_links(true)
+        .into_iter()
+        .filter_map(|e| e.ok())
+    {
+        let f_name = entry.file_name().to_string_lossy();
+        if f_name.starts_with(".") {
+            println!("{}", f_name);
+        }
+        continue;
+    }
+
+    /************************************************
+     * calculate sum of all file sizes at given depth
+     ************************************************/
+
+    let file_size = WalkDir::new(".")
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .map(|e| e.metadata().unwrap().len())
+        .reduce(|x, acc| x + acc)
+        .unwrap();
+    // .fold(0, |acc, x| acc + x);
+
+    println!("Total file size: {}", file_size);
 }
