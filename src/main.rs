@@ -1,3 +1,4 @@
+use glob::{glob, glob_with, MatchOptions};
 use same_file::is_same_file;
 use std::collections::HashMap;
 use std::hash::Hash;
@@ -111,4 +112,31 @@ fn main() {
     // .fold(0, |acc, x| acc + x);
 
     println!("Total file size: {}", file_size);
+
+    /*******************************
+     * Find all png files using glob
+     *******************************/
+    for entry in glob("*.png").expect("Failed to read glob pattern") {
+        match entry {
+            Ok(path) => println!("{:?}", path.display()),
+            Err(e) => println!("{:?}", e),
+        }
+    }
+
+    /***********************************
+     * Find all files matching a pattern
+     ***********************************/
+    let options = MatchOptions {
+        case_sensitive: false,
+        require_literal_separator: false,
+        require_literal_leading_dot: false,
+    };
+
+    // find files matching the following pattern "/media/img_[0-9]*.png"
+    for entry in glob_with("/media/img_[0-9]*.png", options).expect("Failed to read glob pattern") {
+        match entry {
+            Ok(path) => println!("{:?}", path.display()),
+            Err(e) => println!("{:?}", e),
+        }
+    }
 }
