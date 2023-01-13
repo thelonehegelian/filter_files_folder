@@ -1,5 +1,6 @@
 use same_file::is_same_file;
 use std::collections::HashMap;
+use std::hash::Hash;
 use std::io;
 use std::path::{Path, PathBuf};
 use std::{env, fs};
@@ -10,11 +11,12 @@ fn main() {
     let current_dir = env::current_dir().unwrap();
     println!("{}", current_dir.display());
 
-    for entry in current_dir.into_iter() {
-        let metadata = fs::metadata(entry).unwrap();
-        let last_modified = metadata.modified().unwrap().elapsed().unwrap().as_secs();
-        println!("{:?}", last_modified);
-    }
+    // TODO: Fix the error "no file found" on line 15
+    // for entry in current_dir.into_iter() {
+    // let metadata = fs::metadata(entry).unwrap();
+    // let last_modified = metadata.modified().unwrap().elapsed().unwrap().as_secs();
+    // println!("{:?}", last_modified);
+    // }
 
     /************************
      * DETECT LOOP OF A PATH
@@ -38,15 +40,20 @@ fn main() {
      * FIND DUPLICATE FILE NAMES AND PRINT THEM
      ******************************************/
 
+    let mut filenames = HashMap::new();
+    let mut duplicate_filenames: Vec<String> = Vec::new();
     for entry in WalkDir::new(".")
         .into_iter()
         .filter_map(Result::ok)
         .filter(|e| !e.file_type().is_dir())
     {
-        let entry = entry.clone();
-        let path = entry.path();
-        let file_name = path.file_name().unwrap().to_str().unwrap();
-        let mut map = HashMap::new();
-        map.entry(file_name).or_insert_with(Vec::new).push(path);
+        let filename = entry.file_name().to_string_lossy().to_string();
+        let counter = filenames.entry(filename.clone()).or_insert(0);
+        *counter += 1;
+        // if there is a duplicate, print it
+        if *counter == 2 {
+            duplicate_filenames.push(filename.clone());
+        }
     }
+    println!("Duplicate filenames: {:?}", duplicate_filenames);
 }
